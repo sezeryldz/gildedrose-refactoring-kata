@@ -10,6 +10,12 @@ export class Item {
   }
 }
 
+const itemTypes = {
+  agedBrie: "Aged Brie",
+  backstagePass: "Backstage passes to a TAFKAL80ETC concert",
+  handOfRagnaros: "Sulfuras, Hand of Ragnaros",
+};
+
 export class GildedRose {
   items: Array<Item>;
 
@@ -17,53 +23,69 @@ export class GildedRose {
     this.items = items;
   }
 
-  updateQuality() {
-    for (let i = 0; i < this.items.length; i++) {
-      if (this.items[i].name != 'Aged Brie' && this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-        if (this.items[i].quality > 0) {
-          if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-            this.items[i].quality = this.items[i].quality - 1
-          }
-        }
-      } else {
-        if (this.items[i].quality < 50) {
-          this.items[i].quality = this.items[i].quality + 1
-          if (this.items[i].name == 'Backstage passes to a TAFKAL80ETC concert') {
-            if (this.items[i].sellIn < 11) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1
-              }
-            }
-            if (this.items[i].sellIn < 6) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1
-              }
-            }
-          }
-        }
-      }
-      if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-        this.items[i].sellIn = this.items[i].sellIn - 1;
-      }
-      if (this.items[i].sellIn < 0) {
-        if (this.items[i].name != 'Aged Brie') {
-          if (this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-            if (this.items[i].quality > 0) {
-              if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-                this.items[i].quality = this.items[i].quality - 1
-              }
-            }
-          } else {
-            this.items[i].quality = this.items[i].quality - this.items[i].quality
-          }
-        } else {
-          if (this.items[i].quality < 50) {
-            this.items[i].quality = this.items[i].quality + 1
-          }
-        }
+  public updateQuality() {
+    for (const item of this.items) {
+      switch (item.name) {
+        case itemTypes.agedBrie:
+          this.updateAgedBrie(item);
+          continue;
+        case itemTypes.backstagePass:
+          this.updateBackstagePass(item);
+          continue;
+        case itemTypes.handOfRagnaros:
+          //for the current stage of the project, there is no need for this case to do anything.
+          continue;
+        default:
+          this.updateNormal(item);
+          continue;
       }
     }
 
     return this.items;
+  }
+
+  private updateAgedBrie(item: Item) {
+    if (item.quality < 50) {
+      item.quality = item.quality + 1;
+    }
+    item.sellIn = item.sellIn - 1;
+    if (item.sellIn < 0) {
+      if (item.quality < 50) {
+        item.quality = item.quality + 1;
+      }
+    }
+  }
+
+  private updateBackstagePass(item: Item) {
+    if (item.quality < 50) {
+      item.quality = item.quality + 1;
+
+      if (item.sellIn < 11) {
+        if (item.quality < 50) {
+          item.quality = item.quality + 1;
+        }
+      }
+      if (item.sellIn < 6) {
+        if (item.quality < 50) {
+          item.quality = item.quality + 1;
+        }
+      }
+    }
+    item.sellIn = item.sellIn - 1;
+    if (item.sellIn < 0) {
+      item.quality = item.quality - item.quality;
+    }
+  }
+
+  private updateNormal(item: Item) {
+    if (item.quality > 0) {
+      item.quality = item.quality - 1;
+    }
+    item.sellIn = item.sellIn - 1;
+    if (item.sellIn < 0) {
+      if (item.quality > 0) {
+        item.quality = item.quality - 1;
+      }
+    }
   }
 }
