@@ -29,6 +29,7 @@ describe("Gilded Rose", () => {
       "Backstage passes to a TAFKAL80ETC concert",
       "Sulfuras, Hand of Ragnaros",
       "normal item",
+      "Conjured item"
     ];
 
     let mochaOut: [string, number, number, number, number][] = [];

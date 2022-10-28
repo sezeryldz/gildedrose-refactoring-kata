@@ -11,9 +11,10 @@ export class Item {
 }
 
 const itemTypes = {
-  agedBrie: "Aged Brie",
-  backstagePass: "Backstage passes to a TAFKAL80ETC concert",
-  handOfRagnaros: "Sulfuras, Hand of Ragnaros",
+  agedBrie: "Aged",
+  backstagePass: "Backstage",
+  handOfRagnaros: "Sulfuras,",
+  conjured: "Conjured",
 };
 
 export class GildedRose {
@@ -25,7 +26,7 @@ export class GildedRose {
 
   public updateQuality() {
     for (const item of this.items) {
-      switch (item.name) {
+      switch (item.name.split(" ")[0]) {
         case itemTypes.agedBrie:
           this.updateAgedBrie(item);
           continue;
@@ -35,6 +36,9 @@ export class GildedRose {
         case itemTypes.handOfRagnaros:
           //for the current stage of the project, there is no need for this case to do anything.
           continue;
+        case "Conjured":
+          this.updateConjured(item);
+          continue;
         default:
           this.updateNormal(item);
           continue;
@@ -42,6 +46,18 @@ export class GildedRose {
     }
 
     return this.items;
+  }
+
+  private updateConjured(item: Item) {
+    if (item.quality > 0) {
+      item.quality = item.quality - 2;
+    }
+    item.sellIn = item.sellIn - 1;
+    if (item.sellIn < 0) {
+      if (item.quality > 0) {
+        item.quality = item.quality - 1;
+      }
+    }
   }
 
   private updateAgedBrie(item: Item) {
